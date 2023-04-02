@@ -17,7 +17,6 @@ this is code that is being experimented with and developed at the same time
 
 it uses the serialprotocol for the buildhat via nodejs rather than the python library
 
-![image of the robot](./robot.jpg)
 
 # how can i use this
 there are scripts in package.json that runs what it can do so far.
