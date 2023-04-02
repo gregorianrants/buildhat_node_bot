@@ -32,7 +32,7 @@ there are scripts in package.json that runs what it can do so far.
 
 # why am i building this
 
-1. the speed control via the python library is not fit for purpoose there is a delay between the motors start which just makes it spin round.
+1. the speed control via the python library is not suitable for a wheeled robot, there is a delay between the motors starting which just makes it spin round.
 2. the python library uses threads to achieve concurrency, i wanted to use event loop style asynchronous programming.
 
 # why i chose nodejs
