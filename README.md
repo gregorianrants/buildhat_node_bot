@@ -30,16 +30,16 @@ there are scripts in package.json that runs what it can do so far.
 
 # why am i building this
 
-1. the speed control via the python library is not fit for purpoose there is a delay between the motors start whcih just makes it spin round
-2. the python library uses threads to achieve concurrency, i wanted to use event loop style asynchronous programming, 
+1. the speed control via the python library is not fit for purpoose there is a delay between the motors start which just makes it spin round.
+2. the python library uses threads to achieve concurrency, i wanted to use event loop style asynchronous programming.
 
 # why i chose nodejs
 
-i started with using asyncio in python but i am more familiar with nodejs and found it much easier to achieve what i wanted with it.  
+I started with using asyncio in python but i am more familiar with nodejs and found it much easier to achieve what i wanted with it.  
 In particular several parts of my codebase will have to react to the same events, the nodejs event emitter makes this easy.
 I found that i could do some things with node in one declarative line that took many hard to follow lines of garbled code in python.
 e.g. reading from the serial port.
 
 # where am i going with this
-i am actively dveloping this and it will change frequently
-i will add more info here soon about what the code does and where i am going with it.
+I am actively developing this and it will change frequently
+I will add more info here soon about what the code does and where i am going with it.
