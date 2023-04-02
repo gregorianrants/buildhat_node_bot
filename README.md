@@ -1,5 +1,5 @@
 # buildhat-node-bot
-This is the codebase for a differential drive robot that uses the raspberrypi buildhat to control the motors.  The buildhat is controled via its serial protocol using nodejs rather than the python library.
+This is the codebase for a differential drive robot that uses the raspberrypi build hat to control the motors.  The buildhat is controled via its serial protocol using nodejs rather than the python library.
 
 ![image of the robot](./robot.jpg)
 
