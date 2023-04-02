@@ -13,7 +13,9 @@ If you want to use it you probably need to figure out what the code does and mod
 When the build hat turns on it does not have the firmaware on it so you need to run the npm-script load-firmaware (requires python) to load this before running other scripts.
 
 There are paramters specific to my robot in this code, they are not all grouped in an obvious place (yet).
-this is code that is being experimented with and developed at the same time
+this is code that is being experimented with and developed at the same time.
+
+the paramters of the pid control of speed may need to be tuned for your robot.  i will at some point add some graphing features and the ability to store and compare statistics for different pid values to make this easier.
 
 it uses the serialprotocol for the buildhat via nodejs rather than the python library
 
