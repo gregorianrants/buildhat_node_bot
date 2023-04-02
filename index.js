@@ -1,0 +1,1 @@
+console.log('there is no one entry point as there will me many different programs we can run on the robot from the one code base')

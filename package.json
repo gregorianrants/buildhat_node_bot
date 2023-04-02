@@ -1,0 +1,19 @@
+{
+  "name": "build-node-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "load-firmaware": "python3 load_firmaware.py",
+    "stop-motors": "python3 stop_motors.py",
+    "run-Motor": "node ./Motor/motor.run.js",
+    "run-Robot-Velocity": "node ./Robots/velocity.run.js",
+    "run-Motor-motorSpeed": "node ./Motor/motorSpeed.run.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^10.5.0"
+  }
+}
