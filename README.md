@@ -1,22 +1,33 @@
 # buildhat-node-bot
-this is a library that uses the buildhat for raspberry pi to contorl motors on a differential drive robot.
+This is the codebase for a differential drive robot that uses the raspberrypi buildhat to control the motors.  The buildhat is controled via its serial protocol using nodejs rather than the python library.
+
+![image of the robot](./robot.jpg)
 
 # important notes
-the codebase is a first proof of concept that i have published for anyone that wants to follow what i am doing.  fi you want to use it you probably need to figure out what the code does and modify it.
-when the build hat turns on it does not have the firmaware on it so you need to run the npm-script load-firmaware (requires python) to load this before running other scripts.
-there are paramters specific to my robot in this code, they are not all grouped in an obvious place.
+This codebase is a first proof of concept that i have published for anyone that wants to follow what i am doing.
+
+The buildhat is only used for motors, and the code to use it will be developed for this purpose only.
+
+If you want to use it you probably need to figure out what the code does and modify it.
+
+When the build hat turns on it does not have the firmaware on it so you need to run the npm-script load-firmaware (requires python) to load this before running other scripts.
+
+There are paramters specific to my robot in this code, they are not all grouped in an obvious place (yet).
 this is code that is being experimented with and developed at the same time
 
 it uses the serialprotocol for the buildhat via nodejs rather than the python library
 
+![image of the robot](./robot.jpg)
+
 # how can i use this
 there are scripts in package.json that runs what it can do so far.
 
-#what can it do so far
-contorl motors 
-emit motor tacho info as events
-contorl speed of motors using pid
-control translational and rotational speed of robot.
+## what can it do so far
+- contorl motors 
+- emit motor tacho info as events
+- contorl speed of motors using pid
+- control translational and rotational speed of robot.
+- read distance sensors (using pigpio via nodejs - not via the buildhat)
 
 # why am i building this
 
