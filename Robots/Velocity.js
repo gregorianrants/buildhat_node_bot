@@ -1,6 +1,8 @@
 const { MotorSpeed } = require("../Motor/MotorSpeed");
 const { DISTANCE_BETWEEN_WHEELS } = require("../Constants");
 
+let unused = 0;
+
 function getVelocities(translational, rotational) {
   const v_right = translational + (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
   const v_left = translational - (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
@@ -16,7 +18,7 @@ class VelocityRobot {
     this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
   }
 
-  start(translational, rotational) {
+  start(translational = 0, rotational = 0) {
     const { v_left, v_right } = getVelocities(translational, rotational);
     this.leftMotorSpeed.start(v_left);
     this.rightMotorSpeed.start(v_right);

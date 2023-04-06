@@ -1,17 +1,8 @@
-const {DistanceSensorGroup} = require('./DistanceSensors')
-const {DistanceSensor} = require('./DistanceSensor')
+const { distance } = require("mathjs");
+const DistanceSensors = require("./DistanceSensors");
 
-const pinNumbers = [
-  {triggerPin: 27,echoPin: 22, sensorName: '0'},
-  {triggerPin: 23,echoPin: 24, sensorName: '1'},
-  {triggerPin: 6,echoPin: 16, sensorName: '2'},
-  {triggerPin: 21,echoPin: 20, sensorName: '3'},
-  {triggerPin: 26,echoPin: 19, sensorName: '4'}
-]
+const distanceSensors = DistanceSensors();
 
-const distanceSensorGroup = new DistanceSensorGroup(
-  [new DistanceSensor(pinNumbers[3])]
-)
+distanceSensors.start();
 
-
-distanceSensorGroup.read()
+distanceSensors.on("distances", console.log);

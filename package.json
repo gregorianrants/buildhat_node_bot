@@ -10,13 +10,21 @@
     "run-Motor": "node ./Motor/motor.run.js",
     "run-Robot-Velocity": "node ./Robots/velocity.run.js",
     "run-Motor-motorSpeed": "node ./Motor/motorSpeed.run.js",
-    "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js"
-    
+    "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js",
+    "keyboard-control": "node ./control/control.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@stdlib/array-to-circular-iterator": "^0.0.6",
+    "@tensorflow/tfjs-node": "^4.2.0",
+    "keypress": "^0.2.1",
+    "mathjs": "^11.7.0",
     "pigpio": "^3.3.1",
     "serialport": "^10.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.37.0",
+    "prettier": "^2.8.7"
   }
 }

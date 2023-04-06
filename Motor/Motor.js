@@ -115,7 +115,6 @@ async function motorFactory(port, side) {
     direction = 1;
   }
   const motor = new Motor(port, serial, direction);
-  console.log("asdfsadfsdf");
   await serialIsReady;
   await motor.setBias();
   await motor.setPlimit();

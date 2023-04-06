@@ -1,37 +1,58 @@
-const {DistanceSensor} = require('./DistanceSensor')
+const { DistanceSensor } = require("./DistanceSensor");
+var circarray2iterator = require("@stdlib/array-to-circular-iterator");
+const { EventEmitter } = require("events");
 
-class DistanceSensorGroup{
-  constructor(distanceSensors){
-    this.distanceSensors = distanceSensors
-    this.index = 0
+const distances = {};
+
+const emmiter = new EventEmitter();
+
+const pinNumbers = [
+  { triggerPin: 27, echoPin: 22, sensorName: "left" },
+  { triggerPin: 23, echoPin: 24, sensorName: "front_left" },
+  { triggerPin: 6, echoPin: 16, sensorName: "middle" },
+  { triggerPin: 21, echoPin: 20, sensorName: "front_right" },
+  { triggerPin: 26, echoPin: 19, sensorName: "right" },
+];
+
+const sensors = pinNumbers.map(
+  (sensorPinNumbers) => new DistanceSensor(sensorPinNumbers)
+);
+
+sensors.forEach((sensor, i) =>
+  sensor.on("distance", (distance) => {
+    distances[sensor.name] = distance;
+    emmiter.emit("distances", distances);
+  })
+);
+
+const defaultGrouping = [
+  [0, 2, 4],
+  [1, 3],
+];
+
+function DistanceSensors(groupings = defaultGrouping) {
+  function on(eventName, handler) {
+    emmiter.on(eventName, handler);
   }
 
-  updateIndex(){
-    this.index =  (this.index+1)%this.distanceSensors.length
+  groupings = groupings.map((group) =>
+    group.map((sensorIndex) => sensors[sensorIndex])
+  );
+
+  let it = circarray2iterator(groupings);
+
+  function start() {
+    it.next().value.forEach((sensor) => sensor.read());
+    setInterval(() => {
+      it.next().value.forEach((sensor) => sensor.read());
+    }, 1500);
   }
 
-  read(){
-    this.distanceSensors[this.index].read()
-    setInterval(()=>{
-      this.updateIndex()
-      this.distanceSensors[this.index].read()
-    },500)
-  }
+  return {
+    start,
+    on,
+    sensors,
+  };
 }
 
-// const pinNumbers = [
-//   {triggerPin: 27,echoPin: 22, sensorName: '0'},
-//   {triggerPin: 23,echoPin: 24, sensorName: '1'},
-//   {triggerPin: 6,echoPin: 16, sensorName: '2'},
-//   {triggerPin: 21,echoPin: 20, sensorName: '3'},
-//   {triggerPin: 26,echoPin: 19, sensorName: '4'}
-// ]
-
-// const distanceSensorGroup = new DistanceSensorGroup(
-//   [new DistanceSensor(pinNumbers[3])]
-// )
-
-
-// distanceSensorGroup.read()
-
-module.exports = {DistanceSensorGroup}
+module.exports = DistanceSensors;

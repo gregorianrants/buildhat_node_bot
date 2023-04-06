@@ -1,39 +1,41 @@
-class PIController {
-  constructor(
-    proportional_constant = 0,
-    integral_constant = 0,
-    derivative_constant = 0
-  ) {
-    this.proportional_constant = proportional_constant;
-    this.integral_constant = integral_constant;
-    this.derivative_constant = derivative_constant;
-    // Running sums
-    this.integral_sum = 0;
-    this.previous = 0;
-  }
+const PIDController = require('../utilities/PIDController')
 
-  handle_proportional(error) {
-    return this.proportional_constant * error;
-  }
+// class PIController {
+//   constructor(
+//     proportional_constant = 0,
+//     integral_constant = 0,
+//     derivative_constant = 0
+//   ) {
+//     this.proportional_constant = proportional_constant;
+//     this.integral_constant = integral_constant;
+//     this.derivative_constant = derivative_constant;
+//     // Running sums
+//     this.integral_sum = 0;
+//     this.previous = 0;
+//   }
 
-  handle_integral(error) {
-    this.integral_sum += error;
-    return this.integral_constant * error;
-  }
+//   handle_proportional(error) {
+//     return this.proportional_constant * error;
+//   }
 
-  handle_derivative(error) {
-    const derivative = this.derivative_constant * (error - this.previous);
-    this.previous = error;
-    return derivative;
-  }
+//   handle_integral(error) {
+//     this.integral_sum += error;
+//     return this.integral_constant * error;
+//   }
 
-  get_value(error) {
-    let p = this.handle_proportional(error);
-    let i = this.handle_integral(error);
-    let d = this.handle_derivative(error);
-    return p + i + d;
-  }
-}
+//   handle_derivative(error) {
+//     const derivative = this.derivative_constant * (error - this.previous);
+//     this.previous = error;
+//     return derivative;
+//   }
+
+//   get_value(error) {
+//     let p = this.handle_proportional(error);
+//     let i = this.handle_integral(error);
+//     let d = this.handle_derivative(error);
+//     return p + i + d;
+//   }
+// }
 
 class MotorSpeed {
   constructor(motor) {
@@ -41,7 +43,7 @@ class MotorSpeed {
     this.p = 0.001;
     this.k = 0;
     this.d = 0.002;
-    this.pid = new PIController(this.p, this.k, this.d);
+    this.pid = new PIDController(this.p, this.k, this.d);
     //power should probably be passed by previouse behaviour
     this.power = 0;
     this.errors = [];
@@ -56,15 +58,12 @@ class MotorSpeed {
     //console.log(`error ${this.motor.portLetter}`, error);
     //this.errors.push(error);
     let adjustment = this.pid.get_value(error);
-    this.power = this.power - adjustment;
+    this.power = this.setPoint === 0 ? 0 : this.power - adjustment;
     //console.log(speed, error, adjustment, this.power);
     this.motor.pwm = this.power;
   }
 
   set setPoint(speed) {
-    if (speed < 0) {
-      throw new Error("we havent dealt with going backwards yet");
-    }
     this._setPoint = speed;
     console.log("set", this._setPoint);
   }
@@ -74,9 +73,6 @@ class MotorSpeed {
   }
 
   start(setPoint) {
-    if (setPoint < 0) {
-      throw new Error("we havent dealt with going backwards yet");
-    }
     this.setPoint = setPoint;
     console.log(this.setPoint);
     //this.power = Math.max(this.motor.pwm, this.setPoint / 4);
