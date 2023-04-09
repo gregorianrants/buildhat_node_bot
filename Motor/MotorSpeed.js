@@ -1,4 +1,4 @@
-const PIDController = require('../utilities/PIDController')
+const PIDController = require("../utilities/PIDController");
 
 // class PIController {
 //   constructor(
@@ -65,7 +65,6 @@ class MotorSpeed {
 
   set setPoint(speed) {
     this._setPoint = speed;
-    console.log("set", this._setPoint);
   }
 
   get setPoint() {

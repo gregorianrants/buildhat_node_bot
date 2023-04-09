@@ -25,13 +25,13 @@ const STATE_NAMES = {
 
 const ZONES = {
   GREEN_TO_AMBER: 50,
-  AMBER_TO_GREEN: 70,
+  AMBER_TO_GREEN: 90,
   DIFFERENCE_REQURIED_TO_SWITCH_AVOIDENCE_SIDE: 10,
 };
 
 const transitions = {
   ALL: (distances) => {
-    if (minAll(distances) < 20) {
+    if (minAll(distances) < 7) {
       return STATE_NAMES.STOPPED;
     }
     return false;
@@ -73,27 +73,30 @@ function rotationsPerSecond({ rotations, direction }) {
   return direction === "left" ? radiansPerSecond : -1 * radiansPerSecond;
 }
 
+function proportionAcrossZone(distanceToObstacle) {
+  const distanceAcrossZone = ZONES.AMBER_TO_GREEN - distanceToObstacle;
+  return distanceAcrossZone / ZONES.AMBER_TO_GREEN;
+}
+
 const handler = {
   DRIVE_FREE: (distances) => ({
     translation: 300,
     rotation: 0,
   }),
   AVOID_LEFT: (distances) => {
-    const proportionAcrossZone = minLeft(distances) / ZONES.AMBER_TO_GREEN;
     return {
-      translation: proportionAcrossZone * 400,
+      translation: (1 - proportionAcrossZone(minAll(distances))) * 300,
       rotation: rotationsPerSecond({
-        rotations: (1 - proportionAcrossZone) * 0.5,
+        rotations: proportionAcrossZone(minAll(distances)) * 0.5,
         direction: "left",
       }),
     };
   },
   AVOID_RIGHT: (distances) => {
-    const proportionAcrossZone = minLeft(distances) / ZONES.AMBER_TO_GREEN;
     return {
-      translation: proportionAcrossZone * 400,
+      translation: (1 - proportionAcrossZone(minAll(distances))) * 300,
       rotation: rotationsPerSecond({
-        rotations: (1 - proportionAcrossZone) * 0.5,
+        rotations: proportionAcrossZone(minAll(distances)) * 0.5,
         direction: "right",
       }),
     };
@@ -103,18 +106,16 @@ const handler = {
 let state = STATE_NAMES.DRIVE_FREE;
 
 function update(distances) {
-  console.log("state before", state);
   if (transitions["ALL"](distances) == STATE_NAMES.STOPPED) {
-    console.log("you are stopped");
     return {
+      state: "stopped",
       translation: 0,
       rotation: 0,
     };
   }
   state = transitions[state](distances);
-  console.log("state after", state);
   result = handler[state](distances);
-  return result;
+  return { ...result, state };
 }
 
 module.exports = {

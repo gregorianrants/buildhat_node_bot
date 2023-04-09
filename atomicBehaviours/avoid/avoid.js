@@ -5,11 +5,17 @@ const { update } = require("./state");
 
 function Avoid(leftMotor, rightMotor) {
   const velocityRobot = new VelocityRobot(leftMotor, rightMotor);
+  let previousState = null;
 
   function handleDistance(distance) {
-    const { translation, rotation } = update(distance);
+    const { translation, rotation, state } = update(distance);
+
+    console.log("state", state);
     console.log({ translation, rotation });
-    if (translation > 600 || rotation > 5) {
+    console.log(distance);
+
+    previousState = state;
+    if (translation > 700 || rotation > 5) {
       console.log("too high");
       velocityRobot.update(0, 0);
       stop();
@@ -20,7 +26,7 @@ function Avoid(leftMotor, rightMotor) {
   function start() {
     console.log("starting");
     distanceSensors.on("distances", handleDistance);
-    distanceSensors.start(1000);
+    distanceSensors.start(100);
     velocityRobot.start(0, 0);
   }
 

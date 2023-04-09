@@ -30,7 +30,7 @@ async function main() {
 
     async function run() {
       avoid.start();
-      await setTimeout(20000);
+      await setTimeout(50000);
       cleanUpAndExit();
     }
 
