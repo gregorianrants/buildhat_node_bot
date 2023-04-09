@@ -1,58 +1,66 @@
 const { DistanceSensor } = require("./DistanceSensor");
 var circarray2iterator = require("@stdlib/array-to-circular-iterator");
 const { EventEmitter } = require("events");
+const { CONFIG } = require("./constants");
+const { off } = require("process");
+const { distance } = require("mathjs");
 
-const distances = {};
+const distances = CONFIG.map((sensor) => sensor.sensorName).reduce(
+  (a, b) => ({ ...a, [b]: null }),
+  {}
+);
 
 const emmiter = new EventEmitter();
 
-const pinNumbers = [
-  { triggerPin: 27, echoPin: 22, sensorName: "left" },
-  { triggerPin: 23, echoPin: 24, sensorName: "front_left" },
-  { triggerPin: 6, echoPin: 16, sensorName: "middle" },
-  { triggerPin: 21, echoPin: 20, sensorName: "front_right" },
-  { triggerPin: 26, echoPin: 19, sensorName: "right" },
-];
-
-const sensors = pinNumbers.map(
+const sensors = CONFIG.map(
   (sensorPinNumbers) => new DistanceSensor(sensorPinNumbers)
 );
 
-sensors.forEach((sensor, i) =>
-  sensor.on("distance", (distance) => {
+function allRead(distances) {
+  for (const [key, value] of Object.entries(distances)) {
+    if (!value) return false;
+  }
+  return true;
+}
+
+const subsequentHandler = (sensor) => (distance) => {
+  distances[sensor.name] = distance;
+  emmiter.emit("distances", distances);
+};
+
+function initialHandler(sensor) {
+  return function inner(distance) {
+    console.log(
+      "initial handler running distances will not be emmitted till all sensors have provided and inital reading"
+    );
     distances[sensor.name] = distance;
-    emmiter.emit("distances", distances);
-  })
-);
-
-const defaultGrouping = [
-  [0, 2, 4],
-  [1, 3],
-];
-
-function DistanceSensors(groupings = defaultGrouping) {
-  function on(eventName, handler) {
-    emmiter.on(eventName, handler);
-  }
-
-  groupings = groupings.map((group) =>
-    group.map((sensorIndex) => sensors[sensorIndex])
-  );
-
-  let it = circarray2iterator(groupings);
-
-  function start() {
-    it.next().value.forEach((sensor) => sensor.read());
-    setInterval(() => {
-      it.next().value.forEach((sensor) => sensor.read());
-    }, 1500);
-  }
-
-  return {
-    start,
-    on,
-    sensors,
+    if (allRead(distances)) {
+      console.log(
+        "all sensors have been read will now start emitting distances"
+      );
+      sensor.removeListener("distance", inner);
+      sensor.on("distance", subsequentHandler(sensor));
+    }
   };
 }
 
-module.exports = DistanceSensors;
+sensors.forEach((sensor, i) => sensor.on("distance", initialHandler(sensor)));
+
+const groupings = [
+  [0, 2, 4].map((index) => sensors[index]),
+  [1, 3].map((index) => sensors[index]),
+];
+
+let it = circarray2iterator(groupings);
+
+function start(interval = 1000) {
+  it.next().value.forEach((sensor) => sensor.read());
+  setInterval(() => {
+    it.next().value.forEach((sensor) => sensor.read());
+  }, interval);
+}
+
+emmiter.start = start;
+emmiter.sensors = sensors;
+
+module.exports = emmiter;

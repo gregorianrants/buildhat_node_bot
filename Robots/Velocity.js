@@ -24,6 +24,12 @@ class VelocityRobot {
     this.rightMotorSpeed.start(v_right);
   }
 
+  update(translational = 0, rotational=0){
+    const { v_left, v_right } = getVelocities(translational, rotational);
+    this.leftMotorSpeed.setPoint = v_left
+    this.rightMotorSpeed.setPoint = v_right
+  }
+
   stop() {
     this.leftMotorSpeed.stop();
     this.rightMotorSpeed.stop();

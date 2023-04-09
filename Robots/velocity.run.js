@@ -1,5 +1,5 @@
-const { motorFactory } = require("../Motor/Motor");
-const { VelocityRobot } = require("./Velocity");
+const { motorFactory } = require("../../Motor/Motor");
+const { VelocityRobot } = require("../../Velocity");
 const { setTimeout } = require("timers/promises");
 
 console.log(`the velocities i have provided here make the robot trace out a circle with diameter 1m
@@ -7,11 +7,9 @@ the translational velocity is set to cover the circumfrence of the circle in 78 
 and the rotational velocity is set to make a full rotation in 78 seconds
 this results in a circle.
 use ctrl + c to stop the robot.
-`)
+`);
 
 async function main() {
-  
-
   try {
     let leftMotor = await motorFactory("C", "left");
     let rightMotor = await motorFactory("D", "right");

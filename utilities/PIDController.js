@@ -34,3 +34,5 @@ class PIDController {
     return p + i + d;
   }
 }
+
+module.exports = PIDController;

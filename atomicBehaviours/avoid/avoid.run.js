@@ -1,41 +1,36 @@
-const { motorFactory } = require("./Motor");
-const WallTrack = require("./WallTrack");
-const WallTrack = require("./WallTrack");
+const { motorFactory } = require("../../Motor/Motor");
+const Avoid = require("./avoid");
 const { setTimeout } = require("timers/promises");
 
-function next(f) {
-  () => {
-    process.nextTick(f);
-  };
-}
+console.log(`the velocities i have provided here make the robot trace out a circle with diameter 1m
+the translational velocity is set to cover the circumfrence of the circle in 78 seconds
+and the rotational velocity is set to make a full rotation in 78 seconds
+this results in a circle.
+use ctrl + c to stop the robot.
+`);
 
 async function main() {
-  console.log("asdfsadfsdfsdf");
-
   try {
     let leftMotor = await motorFactory("C", "left");
     let rightMotor = await motorFactory("D", "right");
 
-    // let leftMotorSpeed = new MotorSpeed(leftMotor);
-    // let rightMotorSpeed = new MotorSpeed(rightMotor);
-    let wallTrack = WallTrack(leftMotor, rightMotor);
+    let avoid = Avoid(leftMotor, rightMotor);
 
     function cleanUpAndExit() {
       process.nextTick(() => {
-        // leftMotorSpeed.stop();
-        // rightMotorSpeed.stop();
-        wallTrack.stop();
+        avoid.stop();
+
         process.nextTick(() => {
           leftMotor.cleanUp();
           rightMotor.cleanUp();
-          setTimeout(500).then(() => process.exit(0));
+          setTimeout(100).then(() => process.exit(0));
         });
       });
     }
 
     async function run() {
-      wallTrack.start()
-      await setTimeout(3000);
+      avoid.start();
+      await setTimeout(20000);
       cleanUpAndExit();
     }
 
@@ -48,10 +43,12 @@ async function main() {
       .on("uncaughtException", (err) => {
         console.error(err, "Uncaught Exception thrown");
         cleanUpAndExit();
+        process.exit(1);
       });
   } catch (error) {
     console.log(error);
-    cleanUpAndExit();
+    leftMotor.cleanUp();
+    rightMotor.cleanUp();
   }
 }
 
