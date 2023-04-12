@@ -2,6 +2,7 @@ const distanceSensors = require("../../distanceSensors/DistanceSensors");
 const { VelocityRobot } = require("../../Robots/Velocity");
 const { NAMES } = require("../../distanceSensors/constants");
 const { update } = require("./state");
+const { columnTransformDependencies } = require("mathjs");
 
 function Avoid(leftMotor, rightMotor) {
   const velocityRobot = new VelocityRobot(leftMotor, rightMotor);
@@ -10,9 +11,9 @@ function Avoid(leftMotor, rightMotor) {
   function handleDistance(distance) {
     const { translation, rotation, state } = update(distance);
 
-    console.log("state", state);
-    console.log({ translation, rotation });
-    console.log(distance);
+    // console.log("state", state);
+    // console.log({ translation, rotation });
+    // console.log(distance);
 
     previousState = state;
     if (translation > 700 || rotation > 5) {
@@ -23,6 +24,16 @@ function Avoid(leftMotor, rightMotor) {
     velocityRobot.update(translation, rotation);
   }
 
+  function command(command) {
+    if (command === "start") {
+      return start();
+    }
+    if (command === "stop") {
+      return stop();
+    }
+    throw Error("command not recognised");
+  }
+
   function start() {
     console.log("starting");
     distanceSensors.on("distances", handleDistance);
@@ -31,6 +42,7 @@ function Avoid(leftMotor, rightMotor) {
   }
 
   function stop() {
+    console.log("stopping");
     distanceSensors.removeListener("distances", handleDistance);
     velocityRobot.stop();
   }
@@ -38,6 +50,7 @@ function Avoid(leftMotor, rightMotor) {
   return {
     start,
     stop,
+    command,
   };
 }
 

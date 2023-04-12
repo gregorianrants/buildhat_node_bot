@@ -84,6 +84,8 @@ class MotorSpeed {
   stop() {
     console.log("in stop");
     this.motor.removeListener("encoder", this.update);
+    this.power = 0;
+    this.motor.pwm = this.power;
     this.running = false;
   }
 }

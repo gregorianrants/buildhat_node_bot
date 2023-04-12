@@ -19,7 +19,6 @@ async function main() {
     function cleanUpAndExit() {
       process.nextTick(() => {
         avoid.stop();
-
         process.nextTick(() => {
           leftMotor.cleanUp();
           rightMotor.cleanUp();
