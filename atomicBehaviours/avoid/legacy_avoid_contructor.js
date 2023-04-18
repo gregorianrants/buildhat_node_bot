@@ -2,7 +2,6 @@ const distanceSensors = require("../../distanceSensors/DistanceSensors");
 const { VelocityRobot } = require("../../Robots/Velocity");
 const { NAMES } = require("../../distanceSensors/constants");
 const { update } = require("./state");
-const { columnTransformDependencies } = require("mathjs");
 
 function Avoid(leftMotor, rightMotor) {
   const velocityRobot = new VelocityRobot(leftMotor, rightMotor);

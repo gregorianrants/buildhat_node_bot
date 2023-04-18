@@ -1,6 +1,6 @@
 const { motorFactory } = require("../Motor/Motor");
 const { setTimeout } = require("timers/promises");
-const Avoid = require("../atomicBehaviours/avoid/avoid");
+const Avoid = require("../atomicBehaviours/avoid/Avoid");
 
 var keypress = require("keypress");
 
@@ -16,7 +16,7 @@ async function keyboardControl({ Behaviour, forSeconds = 5 }) {
   let leftMotor = await motorFactory("C", "left");
   let rightMotor = await motorFactory("D", "right");
 
-  let behaviour = Behaviour(leftMotor, rightMotor);
+  let behaviour = new Behaviour(leftMotor, rightMotor);
 
   function cleanUpAndExit() {
     process.nextTick(() => {
