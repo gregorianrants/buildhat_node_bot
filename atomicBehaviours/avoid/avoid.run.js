@@ -1,5 +1,5 @@
 const { motorFactory } = require("../../Motor/Motor");
-const Avoid = require("./avoid");
+const Avoid = require("./Avoid");
 const { setTimeout } = require("timers/promises");
 
 console.log(`the velocities i have provided here make the robot trace out a circle with diameter 1m
@@ -14,7 +14,7 @@ async function main() {
     let leftMotor = await motorFactory("C", "left");
     let rightMotor = await motorFactory("D", "right");
 
-    let avoid = Avoid(leftMotor, rightMotor);
+    let avoid = new Avoid(leftMotor, rightMotor);
 
     function cleanUpAndExit() {
       process.nextTick(() => {
@@ -29,7 +29,7 @@ async function main() {
 
     async function run() {
       avoid.start();
-      await setTimeout(50000);
+      await setTimeout(100000);
       cleanUpAndExit();
     }
 

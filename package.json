@@ -13,7 +13,8 @@
     "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js",
     "WallTrack": "sudo node ./atomicBehaviours/WallTrack.run.js",
     "keyboard-control": "node ./control/control.js",
-    "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js"
+    "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js",
+    "vision": "sudo node vision/main.js"
   },
   "author": "",
   "license": "ISC",

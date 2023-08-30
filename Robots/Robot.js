@@ -1,11 +1,60 @@
 const { MotorSpeed } = require("../Motor/MotorSpeed");
 const { DISTANCE_BETWEEN_WHEELS } = require("../Constants");
+const { performance } = require('perf_hooks');
 
 function getVelocities(translational, rotational) {
   const v_right = translational + (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
   const v_left = translational - (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
-
   return { v_left, v_right };
+}
+
+class Odometry {
+  constructor(leftMotor,rightMotor){
+    this.theta = 0
+    this.x = 0
+    this.y = 0
+    this.Vl = null
+    this.Vr = null
+    this.previousTime = null
+    this.leftMotor = leftMotor
+    this.rightMotor = rightMotor
+    this.updateLeft = this.updateLeft.bind(this)
+    this.updateRight = this.updateRight.bind(this)
+    this.start()
+
+    
+
+    // this.rightMotor.on('encoder',([speed,pos,apos])=>{
+    //   this.Vr = speed
+    //   console.log('Vr set to ', this.Vr)
+    // })
+  }
+
+  updateLeft({portIndex,speed,pos,apos}){
+    this.Vl = speed
+    
+    let currentTime = performance.now()/1000
+    if(this.Vr && this.previousTime){
+      let dt = currentTime-this.previousTime
+      this.x = this.x + this.Vl*dt*Math.cos(this.theta)
+      this.y = this.y + this.Vr*dt*Math.sin(this.theta)
+      let Vtheta = (this.Vr-this.Vl)/DISTANCE_BETWEEN_WHEELS
+      this.theta = this.theta + Vtheta*dt
+      console.log('theta',this.theta)
+    }
+    this.previousTime = currentTime
+  }
+
+  updateRight({portIndex,speed,pos,apos}){
+    this.Vr = speed
+  }
+
+  start(){
+    this.leftMotor.on('encoder',this.updateLeft)
+    this.rightMotor.on('encoder',this.updateRight)
+  }
+
+  
 }
 
 class Robot {
@@ -15,6 +64,7 @@ class Robot {
     this.leftMotorSpeed = new MotorSpeed(this.leftMotor);
     this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
     this.start();
+    this.odometry = new Odometry(this.leftMotor,this.rightMotor)
   }
 
   start(translational = 0, rotational = 0) {

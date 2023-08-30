@@ -10,6 +10,8 @@ function getVelocities(translational, rotational) {
   return { v_left, v_right };
 }
 
+
+
 class VelocityRobot {
   constructor(leftMotor, rightMotor) {
     this.leftMotor = leftMotor;
@@ -17,6 +19,8 @@ class VelocityRobot {
     this.leftMotorSpeed = new MotorSpeed(this.leftMotor);
     this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
   }
+
+  
 
   start(translational = 0, rotational = 0) {
     const { v_left, v_right } = getVelocities(translational, rotational);

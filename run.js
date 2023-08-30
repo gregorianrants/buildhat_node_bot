@@ -1,12 +1,12 @@
 const { motorFactory } = require("./Motor/Motor");
 const { setTimeout } = require("timers/promises");
-const Avoid = require("./atomicBehaviours/avoid/avoid");
+const Avoid = require("./atomicBehaviours/avoid/Avoid");
 
 async function run({ Behaviour, forSeconds = 5 }) {
   let leftMotor = await motorFactory("C", "left");
   let rightMotor = await motorFactory("D", "right");
 
-  let behaviour = Behaviour(leftMotor, rightMotor);
+  let behaviour = new Behaviour(leftMotor, rightMotor);
 
   function cleanUpAndExit() {
     process.nextTick(() => {
@@ -21,10 +21,11 @@ async function run({ Behaviour, forSeconds = 5 }) {
 
   async function run() {
     behaviour.start();
-    if (forSeconds) {
-      await setTimeout(forSeconds * 1000);
-      cleanUpAndExit();
-    }
+    // if (forSeconds) {
+    //   await setTimeout(forSeconds * 1000);
+    //   console.log("after");
+    //   cleanUpAndExit();
+    // }
   }
 
   try {
@@ -38,11 +39,11 @@ async function run({ Behaviour, forSeconds = 5 }) {
         process.exit(1);
       });
 
-    run();
+    await run();
   } catch {
     console.error(error);
     cleanUpAndExit();
   }
 }
 
-run({ Behaviour: Avoid });
+run({ Behaviour: Avoid }, (forSeconds = 150));

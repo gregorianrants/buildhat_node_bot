@@ -23,6 +23,8 @@ wss.on("connection", function connection(ws) {
     "640",
     "--height",
     "480",
+    "--framerate",
+    "20"
   ]);
 
   ls.stderr.on("error", (error) => {
@@ -34,13 +36,13 @@ wss.on("connection", function connection(ws) {
   });
 
   ls.stdout.on("data", (data) => {
-    ws.send(data);
+      ws.send(data)
   });
 
   ws.on("error", console.error);
 
   ws.on("message", function message(event) {
-    console.log("received: %s", event);
+      console.log("received:", event.toString());
   });
 
   ws.on("close", () => {
@@ -49,4 +51,4 @@ wss.on("connection", function connection(ws) {
   });
 });
 
-process.on("uncaughtException", (err) => console.error(err));
+process.on("uncaughtException", (err) => console.error('there was an error:',err));

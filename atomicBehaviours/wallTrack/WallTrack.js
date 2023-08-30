@@ -1,7 +1,7 @@
 const { distance } = require("mathjs");
-const distanceSensors = require("../distanceSensors/DistanceSensors");
-const { VelocityRobot } = require("../Robots/Velocity");
-const PIDController = require("../utilities/PIDController");
+const distanceSensors = require("../../distanceSensors/DistanceSensors");
+const { VelocityRobot } = require("../../Robots/Velocity");
+const PIDController = require("../../utilities/PIDController");
 var clamp = require("lodash.clamp");
 
 const rightSensor = distanceSensors.sensors.find(
