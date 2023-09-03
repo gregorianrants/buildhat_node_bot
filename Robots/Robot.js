@@ -1,6 +1,7 @@
 const { MotorSpeed } = require("../Motor/MotorSpeed");
 const { DISTANCE_BETWEEN_WHEELS } = require("../Constants");
 const { performance } = require('perf_hooks');
+const zmq = require("zeromq")
 
 function getVelocities(translational, rotational) {
   const v_right = translational + (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
@@ -9,6 +10,7 @@ function getVelocities(translational, rotational) {
 }
 
 class Odometry {
+
   constructor(leftMotor,rightMotor){
     this.theta = 0
     this.x = 0
@@ -21,9 +23,6 @@ class Odometry {
     this.updateLeft = this.updateLeft.bind(this)
     this.updateRight = this.updateRight.bind(this)
     this.start()
-
-    
-
     // this.rightMotor.on('encoder',([speed,pos,apos])=>{
     //   this.Vr = speed
     //   console.log('Vr set to ', this.Vr)
@@ -53,8 +52,18 @@ class Odometry {
     this.leftMotor.on('encoder',this.updateLeft)
     this.rightMotor.on('encoder',this.updateRight)
   }
+}
 
-  
+async function initialiseSocket() {
+  const sock = new zmq.Publisher
+
+  await sock.bind("tcp://*:3000")
+  console.log("Publisher bound to port 3000")
+
+  const update = async ({side,portIndex,speed,pos,apos})=>{
+    await sock.send(JSON.stringify({side,portIndex,speed,pos,apos}))
+  }
+  return update
 }
 
 class Robot {
@@ -63,11 +72,21 @@ class Robot {
     this.rightMotor = rightMotor;
     this.leftMotorSpeed = new MotorSpeed(this.leftMotor);
     this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
-    this.start();
-    this.odometry = new Odometry(this.leftMotor,this.rightMotor)
+    //this.start();
+    //this.odometry = new Odometry(this.leftMotor,this.rightMotor)
+    this.socket = null
   }
 
-  start(translational = 0, rotational = 0) {
+  async start(translational = 0, rotational = 0) {
+    this.socket = await initialiseSocket()
+    this.leftMotor.on('encoder',({portIndex,speed,pos,apos})=>{
+      const side = 'left'
+      this.socket({side,portIndex,speed,pos,apos})
+    })
+    this.rightMotor.on('encoder',({portIndex,speed,pos,apos})=>{
+      const side = 'right'
+      this.socket({side,portIndex,speed,pos,apos})
+    })
     const { v_left, v_right } = getVelocities(translational, rotational);
     this.leftMotorSpeed.start(v_left);
     this.rightMotorSpeed.start(v_right);

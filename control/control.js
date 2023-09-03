@@ -13,6 +13,7 @@ async function main() {
     let rightMotor = await motorFactory("D", "right");
 
     let robot = new Robot(leftMotor, rightMotor);
+    await robot.start()
 
     function cleanUpAndExit() {
       process.nextTick(() => {
