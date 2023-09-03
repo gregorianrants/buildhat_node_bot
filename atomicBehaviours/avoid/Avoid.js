@@ -1,11 +1,14 @@
 const distanceSensors = require("../../distanceSensors/DistanceSensors");
-const { VelocityRobot } = require("../../Robots/Velocity");
+
+// const { VelocityRobot } = require("../../Robots/Velocity");
+const Robot = require('../../Robots/Robot')
 const { NAMES } = require("../../distanceSensors/constants");
 const { update } = require("./state");
 
 class Avoid {
   constructor(leftMotor, rightMotor) {
-    this.velocityRobot = new VelocityRobot(leftMotor, rightMotor);
+    // this.velocityRobot = new VelocityRobot(leftMotor, rightMotor);
+    this.velocityRobot = new Robot(leftMotor, rightMotor);
     this.previousState = null;
   }
 

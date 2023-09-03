@@ -9,50 +9,6 @@ function getVelocities(translational, rotational) {
   return { v_left, v_right };
 }
 
-class Odometry {
-
-  constructor(leftMotor,rightMotor){
-    this.theta = 0
-    this.x = 0
-    this.y = 0
-    this.Vl = null
-    this.Vr = null
-    this.previousTime = null
-    this.leftMotor = leftMotor
-    this.rightMotor = rightMotor
-    this.updateLeft = this.updateLeft.bind(this)
-    this.updateRight = this.updateRight.bind(this)
-    this.start()
-    // this.rightMotor.on('encoder',([speed,pos,apos])=>{
-    //   this.Vr = speed
-    //   console.log('Vr set to ', this.Vr)
-    // })
-  }
-
-  updateLeft({portIndex,speed,pos,apos}){
-    this.Vl = speed
-    
-    let currentTime = performance.now()/1000
-    if(this.Vr && this.previousTime){
-      let dt = currentTime-this.previousTime
-      this.x = this.x + this.Vl*dt*Math.cos(this.theta)
-      this.y = this.y + this.Vr*dt*Math.sin(this.theta)
-      let Vtheta = (this.Vr-this.Vl)/DISTANCE_BETWEEN_WHEELS
-      this.theta = this.theta + Vtheta*dt
-      console.log('theta',this.theta)
-    }
-    this.previousTime = currentTime
-  }
-
-  updateRight({portIndex,speed,pos,apos}){
-    this.Vr = speed
-  }
-
-  start(){
-    this.leftMotor.on('encoder',this.updateLeft)
-    this.rightMotor.on('encoder',this.updateRight)
-  }
-}
 
 async function initialiseSocket() {
   const sock = new zmq.Publisher
@@ -114,6 +70,12 @@ class Robot {
     this.rightMotorSpeed.setPoint = v_right;
   }
 
+  update(translational = 0, rotational=0){
+    const { v_left, v_right } = getVelocities(translational, rotational);
+    this.leftMotorSpeed.setPoint = v_left
+    this.rightMotorSpeed.setPoint = v_right
+  }
+
   stop() {
     this.leftMotorSpeed.setPoint = 0;
     this.rightMotorSpeed.setPoint = 0;
@@ -139,6 +101,6 @@ class Robot {
   }
 }
 
-module.exports = {
-  Robot,
-};
+
+
+module.exports = Robot;
