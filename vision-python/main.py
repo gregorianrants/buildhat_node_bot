@@ -22,7 +22,6 @@ with picamera.PiCamera() as camera:
         # return current frame
         stream.seek(0)
         result = stream.read()
-        # print(result)
         socket.send(result)
 
         # reset stream for next frame

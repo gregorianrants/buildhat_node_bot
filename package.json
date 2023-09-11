@@ -14,7 +14,7 @@
     "WallTrack": "sudo node ./atomicBehaviours/WallTrack.run.js",
     "keyboard-control": "sudo node ./control/control.js",
     "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js",
-    "vision": "sudo node vision/main.js"
+    "vision": "python3 vision-python/main.py"
   },
   "author": "",
   "license": "ISC",
