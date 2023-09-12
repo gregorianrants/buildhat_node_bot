@@ -2,16 +2,17 @@ import io
 import picamera
 import time
 import zmq
-
-
-from random import randrange
+import os
+from pathlib import Path
+from constants import SOCKETS
 
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
-socket.bind("tcp://*:5556")
+socket.bind(f'tcp://*:{SOCKETS["VISION"]}')
 
 stream = io.BytesIO()
+
 
 with picamera.PiCamera() as camera:
     camera.resolution = (640, 480)
