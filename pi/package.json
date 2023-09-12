@@ -12,7 +12,7 @@
     "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js",
     "keyboard-control": "sudo node ./control/control.js",
     "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js",
-    "vision": "python3 vision-python/main.py"
+    "vision": "python3 vision/camera/main.py"
   },
   "author": "",
   "license": "ISC",

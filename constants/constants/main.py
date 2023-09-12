@@ -4,14 +4,12 @@ import json
 
 cwd = os.getcwd()
 
-mypath = os.path.join(cwd, "../", "SOCKETS.json")
 
-print(os.path.abspath(mypath))
-
+mypath = os.path.join(os.path.dirname(__file__), "../" "SOCKETS.json")
 
 from random import randrange
 
 SOCKETS = None
 
-with open("../SOCKETS.json", "r") as SOCKETS_FILE:
+with open(mypath, "r") as SOCKETS_FILE:
     SOCKETS = json.loads(SOCKETS_FILE.read())
