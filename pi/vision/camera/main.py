@@ -9,7 +9,7 @@ from constants import SOCKETS
 
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
-socket.bind(f'tcp://*:{SOCKETS["VISION"]}')
+socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
 
 stream = io.BytesIO()
 
