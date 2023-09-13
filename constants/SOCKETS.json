@@ -1,4 +1,5 @@
 {
       "CAMERA": 5556,
-      "ROBOT": 5557
+      "ROBOT": 5557,
+      "FOOR_DETECTOR_CAMERA":5558 
 }

@@ -10,6 +10,7 @@ from constants import SOCKETS
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
+socket.bind(f"ipc://@camera")
 
 stream = io.BytesIO()
 
@@ -23,6 +24,7 @@ with picamera.PiCamera() as camera:
         # return current frame
         stream.seek(0)
         result = stream.read()
+
         socket.send(result)
 
         # reset stream for next frame
