@@ -5,12 +5,16 @@ import zmq
 import os
 from pathlib import Path
 from constants import SOCKETS
+from register import register
 
 
 context = zmq.Context()
+address = register(context)
 socket = context.socket(zmq.PUB)
-socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
-socket.bind(f"ipc://@camera")
+# socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
+# socket.bind(f"ipc://@camera")
+
+socket.bind(address)
 
 stream = io.BytesIO()
 
