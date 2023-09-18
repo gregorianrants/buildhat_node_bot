@@ -4,11 +4,16 @@ import time
 import zmq
 import os
 from pathlib import Path
-from register import register
+
+print(os.getcwd())
+
+# from build_hat_node_bot_shared.registerPublisher import registerPublisher
+from build_hat_node_bot_shared.registerPublisher import registerPublisher
 
 
 context = zmq.Context()
-address = register(context)
+address = registerPublisher(context, "tcp://192.168.178.52")
+
 socket = context.socket(zmq.PUB)
 # socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
 # socket.bind(f"ipc://@camera")
