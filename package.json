@@ -1,0 +1,32 @@
+{
+  "name": "build-node-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "load-firmaware": "python3 load_firmaware.py",
+    "stop-motors": "python3 stop_motors.py",
+    "run-Motor": "node ./Motor/motor.run.js",
+    "run-Motor-motorSpeed": "node ./Motor/motorSpeed.run.js",
+    "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js",
+    "keyboard-control": "sudo node ./control/control.js",
+    "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js",
+    "avoid-visual": "sudo node atomicBehaviours/avoid_visual/main.js",
+    "vision": "python3 vision/camera/main.py"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@stdlib/array-to-circular-iterator": "^0.0.6",
+    "express": "^4.18.2",
+    "keypress": "^0.2.1",
+    "lodash.clamp": "^4.0.3",
+    "mathjs": "11.7.0",
+    "pigpio": "^3.3.1",
+    "serialport": "^10.5.0",
+    "socket.io": "^4.6.1",
+    "zeromq": "^6.0.0-beta.17"
+  },
+  "packageManager": "yarn@3.6.3"
+}

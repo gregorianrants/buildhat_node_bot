@@ -3,3 +3,9 @@ node_modules
 venv/
 
 /shared/shared-venv
+
+.yarn
+
+yarn.lock
+
+.yarnrc.yml
