@@ -3,32 +3,51 @@ const zmq = require("zeromq")
 
 
 
-async function run() {
+async function subscribe() {
   const sock = new zmq.Request
 
   sock.connect("tcp://192.168.178.47:3000")
   console.log("Producer bound to port 3000")
 
-  let action =  {action: 'create', entity: 'publisher' ,topic: 'floor-detector', address: }
+  let action =  {"action": "register", 
+  "register_as": "subscriber", 
+  "subscribe_to_node": "floor_detector", 
+  "subscribe_to_topic": "frame"
+  }
 
-  await sock.send(JSON.stringify(action))
-  const [result] = await sock.receive()
+  let success = false
 
-  console.log(result.toString())
+  let subAddress
+
+  while(!success){
+    await sock.send(JSON.stringify(action))
+    let result = await sock.receive()
+    //console.log(result.toString())
+    result = JSON.parse(result.toString())
+    if (result.result ==='success'){
+     subAddress = result.data.fullAddress
+     success = true
+    }
+  }
+
+  console.log('subscribing to', subAddress)
+
+  return subAddress
+}
+
+
+
+async function run() {
+  let subAddress = await subscribe()
+  const sock = new zmq.Subscriber
+
+  sock.connect(subAddress)
+  sock.subscribe("")
+
+
+  for await (const [msg] of sock) {
+    console.log( msg.toString())
+  }
 }
 
 run()
-
-// async function run() {
-//   const sock = new zmq.Subscriber
-
-//   sock.connect("tcp://192.168.178.47:5559")
-//   sock.subscribe("")
-
-
-//   for await (const [msg] of sock) {
-//     console.log( msg)
-//   }
-// }
-
-// run()

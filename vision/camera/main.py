@@ -4,10 +4,12 @@ import time
 import zmq
 import os
 from pathlib import Path
+import sys
 
-print(os.getcwd())
+sys.path.append(
+    "/home/pi/projects/buildhat_node_bot",
+)
 
-# from build_hat_node_bot_shared.registerPublisher import registerPublisher
 from build_hat_node_bot_shared.registerPublisher import registerPublisher
 
 

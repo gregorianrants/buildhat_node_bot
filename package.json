@@ -12,7 +12,7 @@
     "run-DistanceSensors": "sudo node ./distanceSensors/DistanceSensors.run.js",
     "keyboard-control": "sudo node ./control/control.js",
     "avoid": "sudo node ./atomicBehaviours/avoid/avoid.run.js",
-    "avoid-visual": "sudo node atomicBehaviours/avoid_visual/main.js",
+    "avoid-visual": "python3 vision/camera/main.py  & node atomicBehaviours/avoid_visual/main.js",
     "vision": "python3 vision/camera/main.py"
   },
   "author": "",
