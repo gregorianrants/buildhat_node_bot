@@ -14,7 +14,7 @@ from build_hat_node_bot_shared.registerPublisher import registerPublisher
 
 
 context = zmq.Context()
-address = registerPublisher(context, "tcp://192.168.178.52")
+address = registerPublisher(context, "tcp://192.168.178.52", "camera", "frame")
 
 socket = context.socket(zmq.PUB)
 # socket.bind(f'tcp://*:{SOCKETS["CAMERA"]}')
@@ -35,7 +35,7 @@ with picamera.PiCamera() as camera:
         stream.seek(0)
         result = stream.read()
 
-        socket.send(result)
+        socket.send_multipart([b"camera", b"frame", result])
 
         # reset stream for next frame
         stream.seek(0)

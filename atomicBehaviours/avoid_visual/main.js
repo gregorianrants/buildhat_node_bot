@@ -12,7 +12,7 @@ async function subscribe() {
   let action =  {"action": "register", 
   "register_as": "subscriber", 
   "subscribe_to_node": "floor_detector", 
-  "subscribe_to_topic": "frame"
+  "subscribe_to_topic": "floor_detector_features"
   }
 
   let success = false
