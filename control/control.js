@@ -27,6 +27,8 @@ async function main() {
       });
     }
 
+    await setTimeout(1000)
+
     process.stdin.on("keypress", async (ch, key) => {
       console.log('got "keypress"', key);
 

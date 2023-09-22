@@ -44,9 +44,14 @@ async function run() {
   sock.connect(subAddress)
   sock.subscribe("")
 
+  count = 0
 
   for await (const [msg] of sock) {
-    console.log( msg.toString())
+    //console.log( msg.toString())
+    if(count==29){
+      console.log(msg.toString())
+    }
+    count = (count+1)%30
   }
 }
 
