@@ -1,4 +1,3 @@
-const { motorFactory } = require("../../Robot/Motor");
 const Avoid = require("./Avoid");
 const { setTimeout } = require("timers/promises");
 
@@ -10,45 +9,33 @@ use ctrl + c to stop the robot.
 `);
 
 async function main() {
-  try {
-    let leftMotor = await motorFactory("C", "left");
-    let rightMotor = await motorFactory("D", "right");
+    let avoid = new Avoid();
+    
+    process
+      .on("SIGINT", () => {
+        cleanUpAndExit(0);
+      })
+      .on("uncaughtException", (err) => {
+        console.error(err, "Uncaught Exception thrown");
+        cleanUpAndExit(1);
+      });
 
-    let avoid = new Avoid(leftMotor, rightMotor);
-
-    function cleanUpAndExit() {
+    function cleanUpAndExit(exitCode) {
       process.nextTick(() => {
-        avoid.stop();
+        avoid.cleanUp();
         process.nextTick(() => {
-          leftMotor.cleanUp();
-          rightMotor.cleanUp();
-          setTimeout(100).then(() => process.exit(0));
+          setTimeout(100).then(() => process.exit(exitCode));
         });
       });
     }
 
     async function run() {
-      avoid.start();
+      await avoid.init()
       await setTimeout(100000);
       cleanUpAndExit();
     }
 
-    run();
-
-    process
-      .on("SIGINT", () => {
-        cleanUpAndExit();
-      })
-      .on("uncaughtException", (err) => {
-        console.error(err, "Uncaught Exception thrown");
-        cleanUpAndExit();
-        process.exit(1);
-      });
-  } catch (error) {
-    console.log(error);
-    leftMotor.cleanUp();
-    rightMotor.cleanUp();
-  }
+    await run();
 }
 
 main();

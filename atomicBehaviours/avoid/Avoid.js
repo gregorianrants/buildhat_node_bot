@@ -6,10 +6,23 @@ const { NAMES } = require("../../distanceSensors/constants");
 const { update } = require("./state");
 
 class Avoid {
-  constructor(leftMotor, rightMotor) {
+  constructor() {
     // this.velocityRobot = new VelocityRobot(leftMotor, rightMotor);
-    this.velocityRobot = new Robot(leftMotor, rightMotor);
+    this.robot = new Robot();
     this.previousState = null;
+  }
+
+  async init(){
+    await this.robot.init()
+    console.log("starting");
+    distanceSensors.on("distances", this.handleDistance);
+    distanceSensors.start(100);
+  }
+
+  async cleanUp() {
+    console.log("stopping");
+    distanceSensors.removeListener("distances", this.handleDistance);
+    this.robot.cleanUp()
   }
 
   handleDistance = (distance) => {
@@ -22,10 +35,10 @@ class Avoid {
     this.previousState = state;
     if (translation > 700 || rotation > 5) {
       console.log("too high");
-      this.velocityRobot.update(0, 0);
+      this.robot.update(0, 0);
       this.stop();
     }
-    this.velocityRobot.update(translation, rotation);
+    this.robot.update(translation, rotation);
   };
 
   command(command) {
@@ -38,18 +51,7 @@ class Avoid {
     throw Error("command not recognised");
   }
 
-  start() {
-    console.log("starting");
-    distanceSensors.on("distances", this.handleDistance);
-    distanceSensors.start(100);
-    this.velocityRobot.start(0, 0);
-  }
-
-  stop() {
-    console.log("stopping");
-    distanceSensors.removeListener("distances", this.handleDistance);
-    this.velocityRobot.stop();
-  }
+  
 }
 
 module.exports = Avoid;
