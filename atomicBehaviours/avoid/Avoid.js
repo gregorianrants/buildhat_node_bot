@@ -1,7 +1,7 @@
 const distanceSensors = require("../../distanceSensors/DistanceSensors");
 
 // const { VelocityRobot } = require("../../Robots/Velocity");
-const Robot = require('../../Robots/Robot')
+const Robot = require('../../Robot/Robot')
 const { NAMES } = require("../../distanceSensors/constants");
 const { update } = require("./state");
 

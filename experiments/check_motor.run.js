@@ -1,4 +1,4 @@
-const { motorFactory } = require("../Motor/Motor");
+const { motorFactory } = require("../Robot/Motor");
 const { CheckMotor } = require("./checkMotor");
 const { setTimeout } = require("timers/promises");
 

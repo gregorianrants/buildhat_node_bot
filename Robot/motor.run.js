@@ -1,12 +1,22 @@
-const { motorFactory } = require("./Motor");
+const Motor = require("./Motor");
 const { setTimeout } = require("timers/promises");
 
 async function main() {
   console.log("asdfsadfsdfsdf");
 
   try {
-    let motor = await motorFactory("C", "left");
+    let motor = new Motor("D", "right");
+    await motor.init()
 
+    process
+    .on("SIGINT", () => {
+      console.log('got a sig int')
+      cleanUpAndExit();
+    })
+    .on("uncaughtException", (err) => {
+      console.error(err, "Uncaught Exception thrown");
+      cleanUpAndExit();
+    });
     
     function cleanUpAndExit() {
       motor.cleanUp();
@@ -28,14 +38,7 @@ async function main() {
     //   console.log(data);
     // });
 
-    process
-      .on("SIGINT", () => {
-        cleanUpAndExit();
-      })
-      .on("uncaughtException", (err) => {
-        console.error(err, "Uncaught Exception thrown");
-        cleanUpAndExit();
-      });
+   
   } catch (error) {
     console.log(error);
     cleanUpAndExit();

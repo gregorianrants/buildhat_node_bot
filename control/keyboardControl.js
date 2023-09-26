@@ -1,4 +1,4 @@
-const { motorFactory } = require("../Motor/Motor");
+const { motorFactory } = require("../Robot/Motor");
 const { setTimeout } = require("timers/promises");
 const Avoid = require("../atomicBehaviours/avoid/Avoid");
 

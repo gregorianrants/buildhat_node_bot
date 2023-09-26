@@ -1,45 +1,11 @@
+const { initialize } = require("pigpio");
 const PIDController = require("../utilities/PIDController");
-
-// class PIController {
-//   constructor(
-//     proportional_constant = 0,
-//     integral_constant = 0,
-//     derivative_constant = 0
-//   ) {
-//     this.proportional_constant = proportional_constant;
-//     this.integral_constant = integral_constant;
-//     this.derivative_constant = derivative_constant;
-//     // Running sums
-//     this.integral_sum = 0;
-//     this.previous = 0;
-//   }
-
-//   handle_proportional(error) {
-//     return this.proportional_constant * error;
-//   }
-
-//   handle_integral(error) {
-//     this.integral_sum += error;
-//     return this.integral_constant * error;
-//   }
-
-//   handle_derivative(error) {
-//     const derivative = this.derivative_constant * (error - this.previous);
-//     this.previous = error;
-//     return derivative;
-//   }
-
-//   get_value(error) {
-//     let p = this.handle_proportional(error);
-//     let i = this.handle_integral(error);
-//     let d = this.handle_derivative(error);
-//     return p + i + d;
-//   }
-// }
+const Motor = require('./Motor')
 
 class MotorSpeed {
-  constructor(motor) {
-    this.motor = motor;
+  constructor(port,side) {
+    this.side = side
+    this.motor = new Motor(port,side);
     this.p = 0.001;
     this.k = 0;
     this.d = 0.002;
@@ -71,7 +37,9 @@ class MotorSpeed {
     return this._setPoint;
   }
 
-  start(setPoint) {
+  async init(setPoint=0){
+    console.log('initialising motor speed ', this.side)
+    await this.motor.init()
     this.setPoint = setPoint;
     console.log(this.setPoint);
     //this.power = Math.max(this.motor.pwm, this.setPoint / 4);
@@ -81,13 +49,14 @@ class MotorSpeed {
     this.motor.on("encoder", this.update);
   }
 
-  stop() {
+  cleanUp(){
     console.log("in stop");
     this.motor.removeListener("encoder", this.update);
     this.power = 0;
     this.motor.pwm = this.power;
     this.running = false;
+    this.motor.cleanUp()
   }
 }
 
-module.exports = { MotorSpeed };
+module.exports = MotorSpeed;

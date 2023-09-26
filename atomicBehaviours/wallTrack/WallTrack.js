@@ -1,6 +1,6 @@
 const { distance } = require("mathjs");
 const distanceSensors = require("../../distanceSensors/DistanceSensors");
-const { VelocityRobot } = require("../../Robots/Velocity");
+const { VelocityRobot } = require("../../Robot/Velocity");
 const PIDController = require("../../utilities/PIDController");
 var clamp = require("lodash.clamp");
 

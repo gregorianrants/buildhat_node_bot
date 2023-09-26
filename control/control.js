@@ -1,5 +1,5 @@
-const { motorFactory } = require("../Motor/Motor");
-const Robot = require("../Robots/Robot");
+const { motorFactory } = require("../Robot/Motor");
+const Robot = require("../Robot/Robot");
 const { setTimeout } = require("timers/promises");
 
 var keypress = require("keypress");

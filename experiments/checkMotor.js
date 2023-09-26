@@ -1,4 +1,4 @@
-const { motorFactory } = require("../Motor/Motor");
+const { motorFactory } = require("../Robot/Motor");
 const { setTimeout } = require("timers/promises");
 
 console.log(`this was an eperiment i ran to check what units the speed as outputed by build hat were in

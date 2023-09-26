@@ -1,15 +1,25 @@
-const serial = require("../Serial");
+const serial = require("./Serial");
 const { EventEmitter } = require("events");
 const { resolve } = require("path");
-const { MotorSpeed } = require("./MotorSpeed");
+const { setTimeout } = require("timers/promises");
+
+const serialReady = serial.ready()
 
 class Motor extends EventEmitter {
-  constructor(port, serial, direction = 1) {
+  constructor(port, side) {
     super();
+    this.side = side
+    if(side==='left'){
+      this.direction=-1
+    }else if(side==='right'){
+      this.direction=1
+    }
+    else{
+      throw new Error('side must be right or left')
+    }
     this.serial = serial;
     const portLetters = ["A", "B", "C", "D"];
     this.portLetter = port;
-    this.direction = direction;
     let portIndex = portLetters.indexOf(this.portLetter);
     if (portIndex === "-1") {
       throw new Error("you must provide a valid port letter");
@@ -22,7 +32,17 @@ class Motor extends EventEmitter {
       this.cleanUp();
     });
     this._pwm = 0;
+    
+  }
+
+  async init(){
+    console.log(this.side)
+    await serialReady
+    await this.setBias();
+    await this.setPlimit();
     this.startDataStream();
+    await setTimeout(500)
+    console.log(`${this.side} Motor ready`)
   }
 
   write(data) {
@@ -106,19 +126,19 @@ class Motor extends EventEmitter {
   }
 }
 
-const serialIsReady = serial.ready();
+// const serialIsReady = serial.ready();
 
-async function motorFactory(port, side) {
-  if (side == "left") {
-    direction = -1;
-  } else {
-    direction = 1;
-  }
-  const motor = new Motor(port, serial, direction);
-  await serialIsReady;
-  await motor.setBias();
-  await motor.setPlimit();
-  return motor;
-}
+// async function motorFactory(port, side) {
+//   if (side == "left") {
+//     direction = -1;
+//   } else {
+//     direction = 1;
+//   }
+//   const motor = new Motor(port, serial, direction);
+//   await serialIsReady;
+//   await motor.setBias();
+//   await motor.setPlimit();
+//   return motor;
+// }
 
-module.exports = { motorFactory };
+module.exports = Motor;
