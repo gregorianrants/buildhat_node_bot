@@ -1,58 +1,86 @@
-const zmq = require("zeromq")
+const Robot = require('../../Robot/Robot')
+const Subscriber = require('./Subscriber')
+const { MODES,ACTIONS,SIDES,TRANSITIONS } = require("./constants")
+const store = require('./store')
 
 
 
-
-async function subscribe() {
-  const sock = new zmq.Request
-
-  sock.connect("tcp://192.168.178.47:3000")
-  console.log("Producer bound to port 3000")
-
-  let action =  {"action": "register", 
-  "register_as": "subscriber", 
-  "subscribe_to_node": "floor_detector", 
-  "subscribe_to_topic": "floor_detector_features"
-  }
-
-  let success = false
-
-  let subAddress
-
-  while(!success){
-    await sock.send(JSON.stringify(action))
-    let result = await sock.receive()
-    //console.log(result.toString())
-    result = JSON.parse(result.toString())
-    if (result.result ==='success'){
-     subAddress = result.data.fullAddress
-     success = true
+class SelfDrive{
+    constructor(motors){
+            this.motorsState = MODES.STOPPED
+            this.state = null
+            this.previousAction = null
+            this.nextAction = ACTIONS.STOP
+            this.running = false 
+            this.robot = new Robot()
+            this.store = store()
+            this.distance_listner = new Subscriber('floor_detector_features','floor_detector')
+            //console.log(this.motors)
+            this.eventHandler = null
     }
-  }
 
-  console.log('subscribing to', subAddress)
+    resetState(){
+            this.store = store()
+            this.previousAction = null
+            this.nextAction = ACTIONS.STOP
+    }
 
-  return subAddress
+    handleNewData(left,right){
+            //console.log('left: ',left,'right: ',right)
+            this.store.updateState(left,right)
+            this.nextAction = this.store.getState().action
+            //console.log(this.store.getState())
+            if(this.nextAction!==this.previousAction){
+                    this.handleAction()
+                    this.previousAction = this.nextAction
+            }
+    }
+
+    handleAction(){
+            console.log('action has changed')
+            console.log(this.nextAction)
+            if(this.nextAction==ACTIONS.STOP){
+                this.robot.backwards(200)
+            }
+            if(this.nextAction == ACTIONS.FORWARD){
+                    this.robot.forward(300)
+                    //console.log('forward')
+            }
+            if(this.nextAction ==ACTIONS.PIVOT_LEFT){
+                    this.robot.pivotLeft(Math.PI*0.75)
+                    //console.log('left')
+            }
+            if(this.nextAction ==ACTIONS.PIVOT_RIGHT){
+                    this.robot.pivotRight(Math.PI*0.75)
+                    //console.log('right')
+            }
+        //     if(this.nextAction ==ACTIONS.STOP){
+        //             this.robot.stop()
+        //             console.log('right')
+        //     }
+    }
+
+    async init(){
+        await this.robot.init()
+        await this.distance_listner.init()    
+        //we are adding this as an attribute so we can removeListner later, bit scrappy maybe revise
+        this.eventHandler = (message)=>{
+                const {left_closest,right_closest} = JSON.parse(message)
+                this.handleNewData(left_closest,right_closest)
+                }
+        this.distance_listner.on('message',this.eventHandler)
+    }
+
+    async cleanUp(){
+            this.distance_listner.removeListener('message',this.eventHandler)
+            this.resetState()
+            this.handleAction()
+            console.log('unsubscribed')
+            await this.robot.cleanUp()
+    }
+    
 }
 
 
 
-async function run() {
-  let subAddress = await subscribe()
-  const sock = new zmq.Subscriber
-
-  sock.connect(subAddress)
-  sock.subscribe("")
-
-  count = 0
-
-  for await (const [msg] of sock) {
-    //console.log( msg.toString())
-    if(count==29){
-      console.log(msg.toString())
-    }
-    count = (count+1)%30
-  }
-}
-
-run()
+module.exports = SelfDrive
