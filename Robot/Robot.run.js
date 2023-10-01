@@ -4,7 +4,7 @@ const { setTimeout } = require("timers/promises");
 async function main() {
   let robot = new Robot();
 
-  await robot.init()
+  await robot.init();
 
   function cleanUpAndExit() {
     process.nextTick(() => {
@@ -16,14 +16,14 @@ async function main() {
   }
 
   process
-  .on("SIGINT", () => {
-    cleanUpAndExit();
-  })
-  .on("uncaughtException", (err) => {
-    console.error(err, "Uncaught Exception thrown");
-    cleanUpAndExit();
-    process.exit(1);
-  });
+    .on("SIGINT", () => {
+      cleanUpAndExit();
+    })
+    .on("uncaughtException", (err) => {
+      console.error(err, "Uncaught Exception thrown");
+      cleanUpAndExit();
+      process.exit(1);
+    });
 
   async function run() {
     //await setTimeout(1000);
@@ -35,7 +35,7 @@ async function main() {
     cleanUpAndExit();
   }
 
-  run()
+  run();
 }
 
-main()
+main();

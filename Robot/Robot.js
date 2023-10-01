@@ -1,8 +1,9 @@
 const MotorSpeed = require("./MotorSpeed");
 const { DISTANCE_BETWEEN_WHEELS } = require("../Constants");
-const { performance } = require('perf_hooks');
+const { performance } = require("perf_hooks");
 const zmq = require("zeromq");
-const { initialize } = require("pigpio");
+const { initialize, configureInterfaces } = require("pigpio");
+const Motor = require("./Motor");
 
 function getVelocities(translational, rotational) {
   const v_right = translational + (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
@@ -10,105 +11,96 @@ function getVelocities(translational, rotational) {
   return { v_left, v_right };
 }
 
-//need to change the port it is being used by name server
-// async function initialiseSocket() {
-//   const sock = new zmq.Publisher
+class DummyController {
+  constructor() {}
 
-//   await sock.bind("tcp://*:3000")
-//   console.log("Publisher bound to port 3000")
+  transferControl() {
+    return 0;
+  }
 
-//   const update = async ({side,portIndex,speed,pos,apos})=>{
-//     await sock.send(JSON.stringify({side,portIndex,speed,pos,apos}))
-//   }
-//   return update
-// }
+  async stop() {
+    return true;
+  }
+}
 
 class Robot {
   constructor() {
-    this.leftMotorSpeed = new MotorSpeed('C','left');
-    this.rightMotorSpeed = new MotorSpeed('D','right');
-    //this.start();
-    this.socket = null
+    this.leftMotor = new Motor("C", "left");
+    this.rightMotor = new Motor("D", "right");
+    this.leftMotorSpeed = new MotorSpeed(this.leftMotor);
+    this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
+    this.leftController = new DummyController();
+    this.rightController = new DummyController();
+    this.running = false;
   }
 
   async start(translational = 0, rotational = 0) {
-    // this.socket = await initialiseSocket()
-    // this.leftMotor.on('encoder',({portIndex,speed,pos,apos})=>{
-    //   const side = 'left'
-    //   this.socket({side,portIndex,speed,pos,apos})
-    // })
-    // this.rightMotor.on('encoder',({portIndex,speed,pos,apos})=>{
-    //   const side = 'right'
-    //   this.socket({side,portIndex,speed,pos,apos})
-    // })
     const { v_left, v_right } = getVelocities(translational, rotational);
     this.leftMotorSpeed.start(v_left);
     this.rightMotorSpeed.start(v_right);
   }
 
+  setMode(mode = "speed") {
+    if (mode === "speed") {
+      this.leftController.transferControl();
+      this.rightController.transferControl();
+      this.leftController = this.leftMotorSpeed;
+      this.rightController = this.rightMotorSpeed;
+    }
+  }
+
   forward(translationalSpeed = 500) {
-    this.leftMotorSpeed.setPoint = translationalSpeed;
-    this.rightMotorSpeed.setPoint = translationalSpeed;
+    this.setMode("speed");
+    this.leftController.start(translationalSpeed);
+    this.rightController.start(translationalSpeed);
   }
 
   backwards(backwardsSpeed = 400) {
-    this.leftMotorSpeed.setPoint = -backwardsSpeed;
-    this.rightMotorSpeed.setPoint = -backwardsSpeed;
+    this.setMode("speed");
+    this.leftController.start(-backwardsSpeed);
+    this.rightController.start(-backwardsSpeed);
   }
 
   pivotLeft(rotational = 1.5 * Math.PI) {
+    this.setMode("speed");
     const { v_left, v_right } = getVelocities(0, rotational);
-    this.leftMotorSpeed.setPoint = v_left;
-    this.rightMotorSpeed.setPoint = v_right;
+    this.leftController.start(v_left);
+    this.rightController.start(v_right);
   }
 
   pivotRight(rotational = 1.5 * Math.PI) {
+    this.setMode("speed");
     const { v_left, v_right } = getVelocities(0, -rotational);
+    this.leftController.start(v_left);
+    this.rightController.start(v_right);
+  }
+
+  update(translational = 0, rotational = 0) {
+    const { v_left, v_right } = getVelocities(translational, rotational);
     this.leftMotorSpeed.setPoint = v_left;
     this.rightMotorSpeed.setPoint = v_right;
   }
 
-  update(translational = 0, rotational=0){
-    const { v_left, v_right } = getVelocities(translational, rotational);
-    this.leftMotorSpeed.setPoint = v_left
-    this.rightMotorSpeed.setPoint = v_right
+  async stop() {
+    let result = Promise.all([
+      this.leftController.stop(),
+      this.rightController.stop(),
+    ]);
+    this.leftController = new DummyController();
+    this.rightController = new DummyController();
+
+    return result;
   }
 
-  stop() {
-    this.leftMotorSpeed.setPoint = 0;
-    this.rightMotorSpeed.setPoint = 0;
-    // const p = new Promise((resolve, reject) => {
-    //   let stoppedMotorCount = 0;
-
-    //   this.leftMotor.once("encoder", ({ speed }) => {
-    //     if (stoppedMotorCount == 1) {
-    //       return resolve();
-    //     }
-
-    //     stoppedMotorCount += 1;
-    //   });
-
-    //   this.rightMotor.once("encoder", ({ speed }) => {
-    //     if (stoppedMotorCount == 1) {
-    //       return resolve();
-    //     }
-    //     stoppedMotorCount += 1;
-    //   });
-    // });
-    // return p;
+  async init() {
+    await this.leftMotor.init();
+    await this.rightMotor.init();
   }
 
-  async init(){
-    await this.leftMotorSpeed.init()
-    await this.rightMotorSpeed.init()
-  }
-
-  async cleanUp(){
-    this.rightMotorSpeed.cleanUp()
-    this.leftMotorSpeed.cleanUp()
+  async cleanUp() {
+    this.rightMotor.cleanUp();
+    this.leftMotor.cleanUp();
   }
 }
-
-
 
 module.exports = Robot;

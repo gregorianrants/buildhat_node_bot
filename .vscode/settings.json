@@ -9,5 +9,8 @@
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter"
   },
-  "python.formatting.provider": "none" // set as "true" to run 'prettier' last not first
+  "python.formatting.provider": "none",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  } // set as "true" to run 'prettier' last not first
 }
