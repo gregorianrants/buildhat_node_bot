@@ -3,19 +3,18 @@ const { EventEmitter } = require("events");
 const { resolve } = require("path");
 const { setTimeout } = require("timers/promises");
 
-const serialReady = serial.ready()
+const serialReady = serial.ready();
 
 class Motor extends EventEmitter {
   constructor(port, side) {
     super();
-    this.side = side
-    if(side==='left'){
-      this.direction=-1
-    }else if(side==='right'){
-      this.direction=1
-    }
-    else{
-      throw new Error('side must be right or left')
+    this.side = side;
+    if (side === "left") {
+      this.direction = -1;
+    } else if (side === "right") {
+      this.direction = 1;
+    } else {
+      throw new Error("side must be right or left");
     }
     this.serial = serial;
     const portLetters = ["A", "B", "C", "D"];
@@ -32,17 +31,16 @@ class Motor extends EventEmitter {
       this.cleanUp();
     });
     this._pwm = 0;
-    
   }
 
-  async init(){
-    console.log(this.side)
-    await serialReady
+  async init() {
+    console.log(this.side);
+    await serialReady;
     await this.setBias();
     await this.setPlimit();
     this.startDataStream();
-    await setTimeout(500)
-    console.log(`${this.side} Motor ready`)
+    await setTimeout(500);
+    console.log(`${this.side} Motor ready`);
   }
 
   write(data) {

@@ -4,6 +4,7 @@ const { performance } = require("perf_hooks");
 const zmq = require("zeromq");
 const { initialize, configureInterfaces } = require("pigpio");
 const Motor = require("./Motor");
+const { EventEmitter } = require("events");
 
 function getVelocities(translational, rotational) {
   const v_right = translational + (DISTANCE_BETWEEN_WHEELS / 2) * rotational;
@@ -23,14 +24,14 @@ class DummyController {
   }
 }
 
-class Robot {
+class Robot extends EventEmitter {
   constructor() {
+    super();
     this.leftMotor = new Motor("C", "left");
     this.rightMotor = new Motor("D", "right");
     this.leftMotorSpeed = new MotorSpeed(this.leftMotor);
     this.rightMotorSpeed = new MotorSpeed(this.rightMotor);
-    this.leftController = new DummyController();
-    this.rightController = new DummyController();
+    this.abortController = new AbortController();
     this.running = false;
   }
 
@@ -40,39 +41,48 @@ class Robot {
     this.rightMotorSpeed.start(v_right);
   }
 
-  setMode(mode = "speed") {
-    if (mode === "speed") {
-      this.leftController.transferControl();
-      this.rightController.transferControl();
-      this.leftController = this.leftMotorSpeed;
-      this.rightController = this.rightMotorSpeed;
-    }
+  async stop() {
+    this.update(0, 0);
+  }
+
+  onceStopped(F, name) {
+    console.log(`queing up ${name}`);
+    this.removeAllListeners("stopped");
+    this.stop();
+    this.once("stopped", () => {
+      console.log(`command: ${name}`);
+      F();
+    });
   }
 
   forward(translationalSpeed = 500) {
-    this.setMode("speed");
-    this.leftController.start(translationalSpeed);
-    this.rightController.start(translationalSpeed);
+    this.onceStopped(() => {
+      this.leftMotorSpeed.setPoint = translationalSpeed;
+      this.rightMotorSpeed.setPoint = translationalSpeed;
+    }, "forward");
   }
 
   backwards(backwardsSpeed = 400) {
-    this.setMode("speed");
-    this.leftController.start(-backwardsSpeed);
-    this.rightController.start(-backwardsSpeed);
+    this.onceStopped(() => {
+      this.leftMotorSpeed.setPoint = -backwardsSpeed;
+      this.rightMotorSpeed.setPoint = -backwardsSpeed;
+    }, "backwards");
   }
 
-  pivotLeft(rotational = 1.5 * Math.PI) {
-    this.setMode("speed");
-    const { v_left, v_right } = getVelocities(0, rotational);
-    this.leftController.start(v_left);
-    this.rightController.start(v_right);
+  async pivotLeft(rotational = 1.5 * Math.PI) {
+    this.onceStopped(() => {
+      const { v_left, v_right } = getVelocities(0, rotational);
+      this.leftMotorSpeed.setPoint = v_left;
+      this.rightMotorSpeed.setPoint = v_right;
+    }, "pivotLeft");
   }
 
-  pivotRight(rotational = 1.5 * Math.PI) {
-    this.setMode("speed");
-    const { v_left, v_right } = getVelocities(0, -rotational);
-    this.leftController.start(v_left);
-    this.rightController.start(v_right);
+  async pivotRight(rotational = 1.5 * Math.PI) {
+    this.onceStopped(() => {
+      const { v_left, v_right } = getVelocities(0, -rotational);
+      this.leftMotorSpeed.setPoint = v_left;
+      this.rightMotorSpeed.setPoint = v_right;
+    }, "pivotRight");
   }
 
   update(translational = 0, rotational = 0) {
@@ -81,20 +91,25 @@ class Robot {
     this.rightMotorSpeed.setPoint = v_right;
   }
 
-  async stop() {
-    let result = Promise.all([
-      this.leftController.stop(),
-      this.rightController.stop(),
-    ]);
-    this.leftController = new DummyController();
-    this.rightController = new DummyController();
-
-    return result;
+  setupStopEmitter() {
+    let left = 10;
+    let right = 10;
+    this.leftMotor.on("encoder", ({ speed }) => {
+      left = speed;
+    });
+    this.rightMotor.on("encoder", ({ speed }) => {
+      right = speed;
+      if ((left === 0) & (right === 0)) {
+        this.emit("stopped");
+      }
+    });
   }
 
   async init() {
     await this.leftMotor.init();
     await this.rightMotor.init();
+    this.setupStopEmitter();
+    this.start();
   }
 
   async cleanUp() {
