@@ -45,11 +45,7 @@ class RobotCommandControl extends Robot {
     }, "pivotRight");
   }
 
-  update(translational = 0, rotational = 0) {
-    const { v_left, v_right } = this.getVelocities(translational, rotational);
-    this.leftMotorSpeed.setPoint = v_left;
-    this.rightMotorSpeed.setPoint = v_right;
-  }
+
 
   setupStopEmitter() {
     let left = 10;
