@@ -1,5 +1,5 @@
 const { motorFactory } = require("../Robot/Motor");
-const Robot = require("../Robot/Robot");
+const Robot = require("../Robot/RobotCommandControl");
 const { setTimeout } = require("timers/promises");
 
 var keypress = require("keypress");
@@ -36,16 +36,16 @@ async function main() {
     console.log('got "keypress"', key);
 
     if (key && key.name == "up") {
-      robot.forward();
+      robot.forward(300);
     }
     if (key && key.name == "down") {
-      robot.backwards();
+      robot.backwards(200);
     }
     if (key && key.name == "left") {
-      robot.pivotLeft();
+      robot.pivotLeft(0.75 * Math.PI);
     }
     if (key && key.name == "right") {
-      robot.pivotRight();
+      robot.pivotRight(0.75 * Math.PI);
     }
     if (key && key.name == "space") {
       robot.stop();
