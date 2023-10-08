@@ -65,7 +65,7 @@ class MotorSpeed {
     this.motor.pwm = 0;
     this.running = false;
     let p = new Promise((resolve, reject) => {
-      this.motor.on("encoder", ({ speed }) => {
+      this.motor.once("encoder", ({ speed }) => {
         if (speed == 0) {
           resolve();
         }

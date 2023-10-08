@@ -12,18 +12,6 @@ function getVelocities(translational, rotational) {
   return { v_left, v_right };
 }
 
-class DummyController {
-  constructor() {}
-
-  transferControl() {
-    return 0;
-  }
-
-  async stop() {
-    return true;
-  }
-}
-
 class Robot extends EventEmitter {
   constructor() {
     super();
