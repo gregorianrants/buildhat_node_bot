@@ -1,4 +1,4 @@
-const Robot = require("../../Robot/Robot");
+const Robot = require("../../Robot/RobotCommandControl");
 const Subscriber = require("./Subscriber");
 const { MODES, ACTIONS, SIDES, TRANSITIONS } = require("./constants");
 const store = require("./store");
