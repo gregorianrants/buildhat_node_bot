@@ -1,7 +1,3 @@
-
-
-<a href="https://onedrive.live.com/embed?resid=6F1C4AC1EC8BBC89%21734346&authkey=!ANaUNHBdlH2EqQ8">hello</a>
-
 # Raspberry Pi robot 
 
 Obstacle avoiding raspberry pi robot, with distributed software architecture, at the moment this readme just gives an overview of what the hardware and software does.  Soon more information will be added on both how the software works and how it was designed. 
@@ -54,7 +50,7 @@ The Robot uses a kinematic model and the Speed control module to facilitate cont
 
 ## Software Architecture 
 
-Multiple Nodes running on both on robot and off robot across the network 
+Multiple Nodes running on separate processes both on robot and off robot across the network 
 
 Publisher Nodes register their node_name and topic with a manager node.  
 
