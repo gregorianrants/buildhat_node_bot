@@ -17,15 +17,16 @@ This github library is the code which runs on the robot however the full system 
 
 ### Desktop library 
 
-Runs on remote machine, used for controlling the robot, viewing video from camera, running nodes that require intensive processing to free up the processor on the raspberry pi 
+<a href='https://github.com/gregorianrants/buildhat-node-bot-desktop' target='_blank'>Desktop Library</a> runs on remote machine, used for controlling the robot, viewing video from camera, running nodes that require intensive processing to free up the processor on the raspberry pi 
 
 ### Shared library  
 
-For code that is required on both the pi and the desktop 
+<a href='https://github.com/gregorianrants/build_hat_node_bot_shared' target='_blank'>Shared Library</a> is for code that is required on both the pi and the desktop 
 
 ### Web client 
 
-For controlling over the internet, viewing video captured by camera also used for object recognition using tensorflow.js 
+
+<a href='https://github.com/gregorianrants/mission-control' target='_blank'>Web Client</a>  is for controlling over the internet, viewing video captured by camera also used for object recognition using tensorflow.js 
 
 The current implementation of the web client was for a previous implementation of the on robot software and it currently needs reintegrated.  This is a small job though. 
 
@@ -73,6 +74,6 @@ This is currently in a primitive state, it works in simple environments and will
 
 ## Currently being worked on
 
-Tracking robot position using odometery displaying the robot position on a map on the desktop.  odometry will be used for shorterm position and then position will be corrected intermittently using computer vision and markers of a know position.
+Tracking robot position using odometery displaying the robot position on a map on the desktop.  odometry will be used for shorterm position and then position will be corrected intermittently using computer vision and markers of a known position.
 
 Expanding the readme to have full documentation and explanations of design decisions and how the various components of the robot were designed and implemented.
