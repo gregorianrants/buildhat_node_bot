@@ -8,4 +8,4 @@ This library works in conjunction with 3 other libraries.
 
 ## Navigating a complex environment
 
-![robot](https://drive.google.com/file/d/1KNquuaBwte_ihSQTIUiOxNgJBPI0xS6c/view?usp=drive_link)
+![robot](https://drive.google.com/file/d/1KNquuaBwte_ihSQTIUiOxNgJBPI0xS6c/view?usp=sharing)
