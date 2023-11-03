@@ -38,7 +38,7 @@ The current implementation of the web client was for a previous implementation o
 
 Here is a video of the robot navigating a complex human environment.
 
-<a href="https://onedrive.live.com/embed?resid=6F1C4AC1EC8BBC89%21734346&authkey=!ANaUNHBdlH2EqQ8" title="Link Title"><img src="image.png" alt="Alternate Text" /></a>
+<a href="https://1drv.ms/v/s!Aom8i-zBShxvrOkKXISSJo1OxN6IYw?e=2Tu53M" title="Link Title"><img src="image.png" alt="Alternate Text" /></a>
 
 ## Hardware 
 
