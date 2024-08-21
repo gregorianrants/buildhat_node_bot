@@ -1,3 +1,12 @@
+#update
+
+I have rewritten this library fully in python and it is under active development again. the new repo is here:
+
+https://github.com/gregorianrants/composed-robot?tab=readme-ov-file
+
+of note the speed control of motors has been broken out into a python package that can be used indpendantly and also loads the firmware onto the buildhat.  other aspects of the codebase have also been broken out into resusable packages.
+
+
 # Raspberry Pi robot 
 
 Obstacle avoiding raspberry pi robot, with distributed software architecture, at the moment this readme just gives an overview of what the hardware and software does.  Soon more information will be added on both how the software works and how it was designed. 
